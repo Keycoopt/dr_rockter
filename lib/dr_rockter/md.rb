@@ -7,7 +7,7 @@ module DrRockter
   module MD
     KNOWN_TYPES = {
       string:   ->(v) { v },
-      datetime: ->(v) { DateTime.parse v },
+      datetime: ->(v) { DateTime.parse v unless v.nil? },
       url:      ->(v) { URI(v) unless v.nil? }
     }
     DEFAULT_TYPE = KNOWN_TYPES[:string]
