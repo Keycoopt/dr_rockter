@@ -3,7 +3,7 @@ require "dr_rockter/job_offer"
 
 module DrRockter
   class JobOffersExport
-    extend MD
+    include MD
     
     json_attributes :count, :spontaneous_apply_url, ads: [JobOffer]
     

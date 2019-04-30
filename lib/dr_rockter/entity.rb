@@ -4,7 +4,7 @@ require "dr_rockter/hierarchy"
 
 module DrRockter
   class Entity
-    extend MD
+    include MD
     
     json_attributes :public_name, :around, :internal_ref, :address, manager: NodeManagerInfo, hierarchy: Hierarchy
 

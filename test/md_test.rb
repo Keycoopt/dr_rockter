@@ -4,19 +4,19 @@ require "dr_rockter/md"
 
 module DrRockter
   class CustomType
-    extend MD
+    include MD
 
     json_attributes :custom_attr
   end
 
   class Test
-    extend MD
+    include MD
 
     json_attributes a_hash: :hash, a_string: :string, a_url: :url, custom_type: CustomType, string_array: [:string], custom_type_array: [CustomType]
   end
 
   class TestUnknownDeserializer
-    extend MD
+    include MD
 
     json_attributes unknown: :unknown_deserializer
   end
@@ -126,6 +126,26 @@ module DrRockter
       assert_raises DeserializerError do
         TestUnknownDeserializer.json_create(JSON.parse(json))
       end
+    end
+  
+    def test_serialization_methods
+      klass = Class.new { include MD }
+      
+      assert_includes klass.instance_methods, :as_json
+      assert_includes klass.instance_methods, :to_json
+    end
+  
+    def test_serializing
+      klass = Class.new do
+        include MD
+        json_attributes :an_attribute
+      end
+      
+      k = klass.new
+      k.an_attribute = "a value"
+      
+      json = k.as_json
+      assert_equal "a value", json[:an_attribute]
     end
   end
 end

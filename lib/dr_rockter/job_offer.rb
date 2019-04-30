@@ -9,7 +9,8 @@ require "dr_rockter/salary"
 
 module DrRockter
   class JobOffer
-    extend MD, Forwardable
+    include MD
+    extend Forwardable
     
     json_attributes :locale, :reference, :catch_phrase, :contract_type, :contract_duration,
                     :service, :experience_level, :education_level, :title, :description, :profile, :skills,

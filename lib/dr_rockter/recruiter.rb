@@ -2,7 +2,7 @@ require "dr_rockter/md"
 
 module DrRockter
   class Recruiter
-    extend MD
+    include MD
     
     json_attributes :firstname, :lastname, picture_url: :url
     

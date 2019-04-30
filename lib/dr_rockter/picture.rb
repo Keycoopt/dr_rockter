@@ -2,7 +2,7 @@ require "dr_rockter/md"
 
 module DrRockter
   class Picture
-    extend MD
+    include MD
     
     json_attributes default: :url, wide: :url
   end

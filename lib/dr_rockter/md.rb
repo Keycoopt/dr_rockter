@@ -14,6 +14,10 @@ module DrRockter
     DEFAULT_TYPE = KNOWN_TYPES[:string]
     
     class << self
+      def included(base)
+        base.extend ClassMethods
+      end
+      
       def deserializer_for(type)
         if type.is_a?(Array)
           item_type = deserializer_for type.first
@@ -32,46 +36,56 @@ module DrRockter
       end
     end
     
-    def json_attributes(*names_with_or_without_types)
-      attributes = normalize_attributes_names_and_types(names_with_or_without_types)
-      attributes.each do |name, type|
-        define_deserializor name, type
-        define_accessor name
-      end
-    end
-    
-    def json_creatable?
-      true
-    end
-    
-    def json_create(object)
-      new.tap do |jo|
-        object.each { |k, v| jo.send("deserialize_#{k}", v) if jo.respond_to? "deserialize_#{k}" }
-      end
-    end
-    
-    private
-    
-    def normalize_attributes_names_and_types(names_with_or_without_types)
-      names_with_or_without_types.each_with_object({}) do |name_or_hash, attributes|
-        if name_or_hash.respond_to? :to_h
-          attributes.merge! name_or_hash.to_h
-        else
-          attributes.store name_or_hash, DEFAULT_TYPE
+    module ClassMethods
+      def json_attributes(*names_with_or_without_types)
+        attributes = normalize_attributes_names_and_types(names_with_or_without_types)
+        attributes.each do |name, type|
+          define_deserializor name, type
+          define_accessor name
         end
       end
-    end
     
-    def define_deserializor(name, type)
-      deserializer = MD.deserializer_for(type)
+      def json_creatable?
+        true
+      end
+    
+      def json_create(object)
+        new.tap do |jo|
+          object.each { |k, v| jo.send("deserialize_#{k}", v) if jo.respond_to? "deserialize_#{k}" }
+        end
+      end
+    
+      private
+    
+      def normalize_attributes_names_and_types(names_with_or_without_types)
+        names_with_or_without_types.each_with_object({}) do |name_or_hash, attributes|
+          if name_or_hash.respond_to? :to_h
+            attributes.merge! name_or_hash.to_h
+          else
+            attributes.store name_or_hash, DEFAULT_TYPE
+          end
+        end
+      end
+    
+      def define_deserializor(name, type)
+        deserializer = MD.deserializer_for(type)
       
-      define_method "deserialize_#{name}" do |value|
-        instance_variable_set "@#{name}", deserializer.call(value)
+        define_method "deserialize_#{name}" do |value|
+          instance_variable_set "@#{name}", deserializer.call(value)
+        end
+      end
+    
+      def define_accessor(name)
+        attr_accessor name
       end
     end
     
-    def define_accessor(name)
-      attr_accessor name
+    def as_json(*)
+      {}
+    end
+
+    def to_json(*args)
+      as_json.to_json *args
     end
   end
 end
