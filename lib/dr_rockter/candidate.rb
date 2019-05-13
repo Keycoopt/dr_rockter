@@ -1,9 +1,12 @@
 require "delegate"
 require "date"
 require "json"
+require "dr_rockter/md"
 
 module DrRockter
   class Candidate < SimpleDelegator
+    include MD
+    
     GENDERS = [MALE = 1, FEMALE = 2]
     
     attr_accessor :reference, :consent_date, :origin, :locale, :message
@@ -24,13 +27,10 @@ module DrRockter
       }
     end
     
-    def to_json(*args)
-      as_json.to_json *args
-    end
-    
     class PersonnalInfo
-      attr_accessor :gender, :first_name, :last_name, :email, :phone, :job, :street, :zip_code, :city
+      include MD
       
+      attr_accessor :gender, :first_name, :last_name, :email, :phone, :job, :street, :zip_code, :city
       
       def as_json(*args)
         {
@@ -45,14 +45,12 @@ module DrRockter
           "addressCity"   => @city
         }
       end
-      
-      def to_json(*args)
-        as_json.to_json *args
-      end
     end
     private_constant :PersonnalInfo
     
     class Message
+      include MD
+      
       def initialize(content)
         @content = content
       end
@@ -61,10 +59,6 @@ module DrRockter
         {
           "message": @content
         }
-      end
-      
-      def to_json(*args)
-        as_json.to_json *args
       end
     end
     private_constant :Message
