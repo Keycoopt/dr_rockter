@@ -16,6 +16,7 @@ module DrRockter
     class << self
       def included(base)
         base.extend ClassMethods
+        base.instance_variable_set :@_json_attributes, []
       end
       
       def deserializer_for(type)
@@ -42,6 +43,7 @@ module DrRockter
         attributes.each do |name, type|
           define_deserializor name, type
           define_accessor name
+          @_json_attributes << name
         end
       end
     
@@ -78,6 +80,10 @@ module DrRockter
       def define_accessor(name)
         attr_accessor name
       end
+    end
+    
+    def json_attributes
+      self.class.instance_variable_get :@_json_attributes
     end
     
     def as_json(*)

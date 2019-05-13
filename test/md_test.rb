@@ -134,6 +134,19 @@ module DrRockter
       assert_includes klass.instance_methods, :as_json
       assert_includes klass.instance_methods, :to_json
     end
+    
+    def test_json_attributes_instance_method
+      klass = Class.new do
+        include MD
+        json_attributes :a, :b, :c
+      end
+      
+      k = klass.new
+      
+      assert_includes k.json_attributes, :a
+      assert_includes k.json_attributes, :b
+      assert_includes k.json_attributes, :c
+    end
   
     def test_serializing
       klass = Class.new do
