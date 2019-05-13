@@ -1,5 +1,6 @@
 require "date"
 require "uri"
+require "json"
 
 module DrRockter
   DeserializerError = Class.new(StandardError)
@@ -87,7 +88,9 @@ module DrRockter
     end
     
     def as_json(*)
-      {}
+      json_attributes.each_with_object({}) do |name, h|
+        h.store name, public_send(name)
+      end
     end
 
     def to_json(*args)
