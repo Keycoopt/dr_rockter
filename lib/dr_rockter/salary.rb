@@ -4,6 +4,6 @@ module DrRockter
   class Salary
     extend MD
     
-    json_attributes :min, :max, :kind, :rate_type, :variable
+    json_attributes :min, :max, :kind, :rate_type, :variable, :currency
   end
 end
